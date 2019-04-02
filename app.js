@@ -68,7 +68,7 @@ let UIController = (function() {
         return {
             type: document.querySelector(DOMstrings.inputType).value, // Will be either inc or exp
             description: document.querySelector(DOMstrings.inputDescription).value,
-            value: document.querySelector(DOMstrings.inputValue).value
+            value: parseFloat(document.querySelector(DOMstrings.inputValue).value)
         };
       },
 
@@ -124,6 +124,14 @@ let controller = (function(budgetCtrl, UICtrl) {
       });
     };
 
+    let updateBudget = function() {
+      // Calculate the budget
+
+      // Return budget
+
+      // Display budget on user interface
+    };
+
     let ctrlAddItem = function() {
       // variables
       let input, newItem;
@@ -135,9 +143,8 @@ let controller = (function(budgetCtrl, UICtrl) {
       UICtrl.addListItem(newItem, input.type);
       // Clears the fields
       UICtrl.clearFields();
-      // Calculate the budget
-
-      // Display budget on user interface
+      // Calculate & update budget
+      updateBudget();
     };
 
     return {
