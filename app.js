@@ -6,13 +6,23 @@ let budgetController = (function() {
     this.description = description;
     this.value = value;
   };
+
   // Income Structure
   let Income = function(id, description, value) {
     this.id = id;
     this.description = description;
     this.value = value;
   };
-  // Data Structue
+
+  let calculateTotal = function(type) {
+    let sum = 0;
+    data.allItems[type].forEach(function(cur) {
+      sum = sum + cur.value;
+    });
+    data.totals[type] = sum;
+  };
+
+  // Global Data Structue
   let data = {
     allItems: {
       exp: [],
@@ -21,8 +31,11 @@ let budgetController = (function() {
     totals: {
       exp: 0,
       inc: 0
-    }
+    },
+    budget: 0,
+    percentage: -1
   };
+
   // Add new item method
   return {
     addItem: function(type, des, val) {
@@ -44,12 +57,37 @@ let budgetController = (function() {
         // Return the new element
         return newItem;
     },
+
+    calculateBudget: function() {
+      // Calculate total income and expenses
+      calculateTotal('exp');
+      calculateTotal('inc');
+      // Calculate budget: income - expenses
+      data.budget = data.totals.inc - data.totals.exp;
+      // Calculate percentage of income that we spent
+      if (data.totals.inc > 0) {
+        data.percentage = Math.round((data.totals.exp / data.totals.inc) * 100);
+      } else {
+        data.percentage = -1;
+      }
+    },
+
+    getBudget: function() {
+      return {
+        budget: data.budget,
+        totalInc: data.totals.inc,
+        totalExp: data.totals.exp,
+        percentage: data.percentage
+      };
+    },
+
     testing: function() {
       console.log(data);
     }
   };
 
 })();
+
 
 // UI CONTROLLER
 let UIController = (function() {
@@ -109,6 +147,7 @@ let UIController = (function() {
     };
 })();
 
+
 // GLOBAL CONTROLLER
 let controller = (function(budgetCtrl, UICtrl) {
 
@@ -126,14 +165,14 @@ let controller = (function(budgetCtrl, UICtrl) {
 
     let updateBudget = function() {
       // Calculate the budget
-
+      budgetCtrl.calculateBudget();
       // Return budget
-
+      let budget = budgetCtrl.getBudget();
       // Display budget on user interface
+      console.log(budget);
     };
 
     let ctrlAddItem = function() {
-      // variables
       let input, newItem;
       // Get field input data
       input = UICtrl.getInput();
