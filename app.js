@@ -58,6 +58,21 @@ const budgetController = (function() {
         return newItem;
     },
 
+    deleteItem: function(type, id) {
+      let ids, index;
+
+      ids = data.allItems[type].map(function(current) {
+        return current.id;
+      });
+
+      index = ids.indexOf(id);
+
+      if(index !== -1) {
+        data.allItems[type].splice(index, 1);
+      }
+
+    },
+
     calculateBudget: function() {
       // Calculate total income and expenses
       calculateTotal('exp');
@@ -92,7 +107,7 @@ const budgetController = (function() {
 // UI CONTROLLER
 const UIController = (function() {
 
-    let DOMstrings = {
+    const DOMstrings = {
       inputType: '.add__type',
       inputDescription: '.add__description',
       inputValue: '.add__value',
@@ -133,6 +148,11 @@ const UIController = (function() {
         document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
       },
 
+      deleteListItem: function(selectorID) {
+          let el = document.getElementById(selectorID);
+          el.parentNode.removeChild(el);
+      },
+
       clearFields: function() {
         let fields, fieldsArr;
 
@@ -166,9 +186,9 @@ const UIController = (function() {
 
 
 // GLOBAL CONTROLLER
-let controller = (function(budgetCtrl, UICtrl) {
+const controller = (function(budgetCtrl, UICtrl) {
 
-    let setupEventListeners = function() {
+    const setupEventListeners = function() {
       let DOM = UICtrl.getDOMstrings();
 
       document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
@@ -183,16 +203,16 @@ let controller = (function(budgetCtrl, UICtrl) {
 
     };
 
-    let updateBudget = function() {
+    const updateBudget = function() {
       // Calculate the budget
       budgetCtrl.calculateBudget();
       // Return budget
-      let budget = budgetCtrl.getBudget();
+      const budget = budgetCtrl.getBudget();
       // Display budget on user interface
       UICtrl.displayBudget(budget);
     };
 
-    let ctrlAddItem = function() {
+    const ctrlAddItem = function() {
       let input, newItem;
       // Get field input data
       input = UICtrl.getInput();
@@ -215,13 +235,15 @@ let controller = (function(budgetCtrl, UICtrl) {
       itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
 
       if(itemID) {
-          // inc
           splitID = itemID.split('-');
           type = splitID[0];
-          ID = splitID[1];
+          ID = parseInt(splitID[1]);
           // Delete item from data Structure
+          budgetCtrl.deleteItem(type, ID);
           // Delete  the item from the UI
+          UICtrl.deleteListItem(itemID);
           // Update and show new budget
+          updateBudget();
       }
 
 
