@@ -5,7 +5,20 @@ const budgetController = (function() {
     this.id = id;
     this.description = description;
     this.value = value;
+    this.percentage = -1;
   };
+
+  Expense.prototype.calcPercentage = function(totalIncome) {
+      if (totalIncome > 0) {
+        this.percentage = Math.round((this.value / totalIncome) * 100);
+      } else {
+        this.percentage = -1;
+      }
+  };
+
+  Expense.prototype.getPercentage = function() {
+    return this.percentage;
+  }
 
   // Income Structure
   const Income = function(id, description, value) {
@@ -33,7 +46,7 @@ const budgetController = (function() {
       inc: 0
     },
     budget: 0,
-    percentage: -1
+    // percentage: -1
   };
 
   // Add new item method
@@ -85,6 +98,20 @@ const budgetController = (function() {
       } else {
         data.percentage = -1;
       }
+    },
+
+    calculatePercentages: function() {
+      data.allItems.exp.forEach(function(cur) {
+        cur.calcPercentage(data.totals.inc);
+      });
+
+    },
+
+    getPercentages: function() {
+      let allPerc = data.allItems.exp.map(function(cur) {
+        return cur.getPercentage();
+      });
+      return allPerc;
     },
 
     getBudget: function() {
@@ -212,6 +239,14 @@ const controller = (function(budgetCtrl, UICtrl) {
       UICtrl.displayBudget(budget);
     };
 
+    const updatePercentages = function() {
+      // Calculate the percentages
+      let percentages = budgetCtrl.getPercentages();
+      // Read percentages from budget controller
+      // Update the UI with new percentages
+      console.log(percentages);
+    };
+
     const ctrlAddItem = function() {
       let input, newItem;
       // Get field input data
@@ -226,6 +261,8 @@ const controller = (function(budgetCtrl, UICtrl) {
         UICtrl.clearFields();
         // Calculate & update budget
         updateBudget();
+        // Calculate & update percentages
+        updatePercentages();
       }
     };
 
@@ -244,6 +281,8 @@ const controller = (function(budgetCtrl, UICtrl) {
           UICtrl.deleteListItem(itemID);
           // Update and show new budget
           updateBudget();
+          // Calculate & update percentages
+          updatePercentages();
       }
 
 
