@@ -18,7 +18,7 @@ const budgetController = (function() {
 
   Expense.prototype.getPercentage = function() {
     return this.percentage;
-  }
+  };
 
   // Income Structure
   const Income = function(id, description, value) {
@@ -241,8 +241,9 @@ const controller = (function(budgetCtrl, UICtrl) {
 
     const updatePercentages = function() {
       // Calculate the percentages
-      let percentages = budgetCtrl.getPercentages();
+      budgetCtrl.calculatePercentages();
       // Read percentages from budget controller
+      let percentages = budgetCtrl.getPercentages();
       // Update the UI with new percentages
       console.log(percentages);
     };
