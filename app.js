@@ -147,7 +147,26 @@ const UIController = (function() {
       percentageLabel: '.budget__expenses--percentage',
       container: '.container',
       expensesPercLabl: '.item__percentage'
-    }
+    };
+
+    const formatNumber = function(num, type) {
+      // + or - before number
+      var numSplit, int, dec, type;
+
+      num = Math.abs(num);
+      num = num.toFixed(2);
+      numSplit = num.split('.')
+
+      int = numSplit[0];
+
+      if (int.length > 3) {
+        int = int.substr(0, 1) + ',' + int.substr(int.length - 3, 3)
+      }
+
+      dec = numSplit[1];
+
+      return (type === 'exp' ? sign = '-' : '+') + ' ' + int + '.' + dec;
+    };
 
     return {
       getInput: function() {
@@ -159,7 +178,7 @@ const UIController = (function() {
       },
 
       addListItem: function(obj, type) {
-        let html, newHtml, element;
+        var html, newHtml, element;
         // Create HTML string with placeholder text
         if (type === 'inc') {
           element = DOMstrings.incomeContainer;
@@ -171,18 +190,18 @@ const UIController = (function() {
         // Replace placeholder text with data from object
         newHtml = html.replace('%id%', obj.id);
         newHtml = newHtml.replace('%description%', obj.description);
-        newHtml = newHtml.replace('%value%', obj.value);
+        newHtml = newHtml.replace('%value%', formatNumber(obj.value, type));
         // Insert HTML into DOM
         document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
       },
 
       deleteListItem: function(selectorID) {
-          let el = document.getElementById(selectorID);
+          var el = document.getElementById(selectorID);
           el.parentNode.removeChild(el);
       },
 
       clearFields: function() {
-        let fields, fieldsArr;
+        var fields, fieldsArr;
 
         fields = document.querySelectorAll(DOMstrings.inputDescription + ', ' + DOMstrings.inputValue);
         fieldsArr = Array.prototype.slice.call(fields);
@@ -195,9 +214,12 @@ const UIController = (function() {
       },
 
       displayBudget: function(obj) {
-          document.querySelector(DOMstrings.budgetLabel).textContent = obj.budget;
-          document.querySelector(DOMstrings.incomeLabel).textContent = obj.totalInc;
-          document.querySelector(DOMstrings.expensesLabel).textContent = obj.totalExp;
+          var type;
+          obj.budget > 0 ? type = 'inc' : type = 'exp';
+
+          document.querySelector(DOMstrings.budgetLabel).textContent = formatNumber(obj.budget, type);
+          document.querySelector(DOMstrings.incomeLabel).textContent = formatNumber(obj.totalInc, 'inc');
+          document.querySelector(DOMstrings.expensesLabel).textContent = formatNumber(obj.totalExp, 'exp');
 
           if (obj.percentage > 0) {
             document.querySelector(DOMstrings.percentageLabel).textContent = obj.percentage + '%';
@@ -208,9 +230,9 @@ const UIController = (function() {
 
       displayPercentages: function(percentages) {
 
-        let fields = document.querySelectorAll(DOMstrings.expensesPercLabl);
+        var fields = document.querySelectorAll(DOMstrings.expensesPercLabl);
 
-        let nodeListforEach = function(list, callback) {
+        const nodeListforEach = function(list, callback) {
           for (let i = 0; i < list.length; i++) {
             callback(list[i], i);
           }
@@ -238,7 +260,7 @@ const UIController = (function() {
 const controller = (function(budgetCtrl, UICtrl) {
 
     const setupEventListeners = function() {
-      let DOM = UICtrl.getDOMstrings();
+      const DOM = UICtrl.getDOMstrings();
 
       document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
 
@@ -272,7 +294,7 @@ const controller = (function(budgetCtrl, UICtrl) {
     };
 
     const ctrlAddItem = function() {
-      let input, newItem;
+      var input, newItem;
       // Get field input data
       input = UICtrl.getInput();
 
@@ -291,7 +313,7 @@ const controller = (function(budgetCtrl, UICtrl) {
     };
 
     const ctrlDeleteItem = function(event) {
-      let itemID, splitID, type, ID;
+      var itemID, splitID, type, ID;
 
       itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
 
