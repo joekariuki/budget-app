@@ -5,6 +5,7 @@
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:100,300,400,600" rel="stylesheet" type="text/css">
         <link href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.4.8/collection/icon/icon.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.css">
         <link type="text/css" rel="stylesheet" href="style.css">
         <title>Budgety</title>
     </head>
@@ -48,6 +49,10 @@
                     <input type="number" class="add__value" placeholder="Value">
                     <button class="add__btn"><ion-icon name="checkmark-circle" class="ion-ios-checkmark-outline"></ion-icon></button>
                 </div>
+            </div>
+
+            <div>
+              <canvas id="myChart"></canvas>
             </div>
 
             <div class="container clearfix">
@@ -117,7 +122,7 @@
 
 
         </div>
-
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
         <script src="app.js"></script>
     </body>
 </html>

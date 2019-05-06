@@ -246,7 +246,6 @@ const UIController = (function() {
           } else {
             current.textContent = '---';
           }
-
         });
       },
 
